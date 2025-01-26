@@ -210,7 +210,7 @@ public class LinkedList {
 			current = current.next;
 		}
 		if(current == null){
-			return;
+			throw new NullPointerException("ERROR NullPointerException!");
 		} 
 		if(prev == null){
 			first = first.next;
