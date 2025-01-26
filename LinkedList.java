@@ -271,15 +271,14 @@ public class LinkedList {
 	 */
 	public String toString() {
 		if(this.size == 0){
-			return "()";
+			return"";
 		}
-		String str = "(";
+		String str = "";
 		Node current = first;
 		while(current != null){
-			str += current.block + " ";
+			str += " (" + current.block.baseAddress + " , " + current.block.length + ")";
 			current = current.next;
 		}
-
-		return str.substring(0, str.length() - 1) + ")";
+		return str.substring(1, str.length());
 	}
 }
