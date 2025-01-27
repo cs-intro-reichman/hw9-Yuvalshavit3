@@ -64,6 +64,7 @@ public class MemorySpace {
 			if(current.block.length >= length){
 				MemoryBlock newMemory = new MemoryBlock(current.block.baseAddress, length);
 				allocatedList.addLast(newMemory);
+				System.out.println(newMemory);
 				int newBaseAddress = current.block.baseAddress;
 				if(current.block.length == length){
 					freeList.remove(counter);
