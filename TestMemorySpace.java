@@ -54,7 +54,7 @@ public class TestMemorySpace {
         memory.malloc(60);
         int address = memory.malloc(50);
         assertEqual(-1, address, "Allocation failure");
-
+        System.out.println("CHECK OUT" + memory);
         String expected = "(60 , 40)\n(0 , 60)\n";
         assertString(expected, memory.toString(), "State after allocation failure");
     }
