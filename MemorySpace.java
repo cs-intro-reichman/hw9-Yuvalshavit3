@@ -58,26 +58,30 @@ public class MemorySpace {
 	 * @return the base address of the allocated block, or -1 if unable to allocate
 	 */
 	public int malloc(int length) {		
+		//1. scan the freelist 
 		int counter = 0;
 		Node current = freeList.getNode(counter);
-		while(current != null){
-			if(current.block.length >= length){
-				MemoryBlock newMemory = new MemoryBlock(current.block.baseAddress, length);
-				allocatedList.addLast(newMemory);
+		while (current != null) {
+			if (current.block.length >= length) {
+				//1. create new memoryblock
+				MemoryBlock newMB = new MemoryBlock(current.block.baseAddress, length);
+				//2. append to the end of the allocatedlist and update base address and length in the allocated block
+				allocatedList.addLast(newMB);
 				int newBaseAddress = current.block.baseAddress;
-				if(current.block.length == length){
-					freeList.remove(counter);
+				//3. change baseadress and length in the freelist or remove
+				if (current.block.length == length) {
+					freeList.remove(counter);	
 				} else {
 					current.block.baseAddress += length;
 					current.block.length -= length;
 				}
+				//4.return base address
 				return newBaseAddress;
-			} else {
+			} else { 
 				counter++;
 				current = freeList.getNode(counter);
 			}
 		}
-
 		return -1;
 	}
 
@@ -118,28 +122,24 @@ public class MemorySpace {
 	 * In this implementation Malloc does not call defrag.
 	 */
 	public void defrag() {
-		int index = 0;
-
-		while (index < freeList.getSize() - 1) {
-			if (freeList.getSize() <= 1) {
-				return;
-			}	
-			LinkedList betterFreeList = new LinkedList();
-			Node current = freeList.getNode(0);
-			while (current != null) {
-				Node toCheckOn = current.next;
-				while (toCheckOn != null) {
-					if (current.block.baseAddress + current.block.length == toCheckOn.block.baseAddress) {
-						current.block.length += toCheckOn.block.length;
-						freeList.remove(toCheckOn);
-						toCheckOn = current.next;
-					} else {
-						toCheckOn = toCheckOn.next;
-					}
+		if (freeList.getSize() <= 1) {
+			return;
+		}	
+		LinkedList betterFreeList = new LinkedList();
+		Node current = freeList.getNode(0);
+		while (current != null) {
+			Node toCheckOn = current.next;
+			while (toCheckOn != null) {
+				if (current.block.baseAddress + current.block.length == toCheckOn.block.baseAddress) {
+					current.block.length += toCheckOn.block.length;
+					freeList.remove(toCheckOn);
+					toCheckOn = current.next;
+				} else {
+					toCheckOn = toCheckOn.next;
 				}
-				betterFreeList.addLast(current.block);
-				current=current.next;
 			}
+			betterFreeList.addLast(current.block);
+			current=current.next;
 		}
 	}
 }
