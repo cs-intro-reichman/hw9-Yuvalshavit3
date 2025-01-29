@@ -20,14 +20,12 @@ public class TestMemorySpace {
         MemorySpace memory = new MemorySpace(100);
         String expected = "(0 , 100)\n";
         assertString(expected, memory.toString(), "Initialization");
-        System.out.println("memory INITIALIZED" + memory);
     }
 
     private static void testSimpleAllocation() {
         MemorySpace memory = new MemorySpace(100);
         int address = memory.malloc(20);
         assertEqual(0, address, "Simple allocation address");
-        System.out.println("malloc1 INITIALIZED" + memory);
 
         String expected = "(20 , 80)\n(0 , 20)\n";
         assertString(expected, memory.toString(), "Simple allocation state");
@@ -54,7 +52,7 @@ public class TestMemorySpace {
         memory.malloc(60);
         int address = memory.malloc(50);
         assertEqual(-1, address, "Allocation failure");
-        System.out.println("CHECK OUT" + memory);
+        
         String expected = "(60 , 40)\n(0 , 60)\n";
         assertString(expected, memory.toString(), "State after allocation failure");
     }
@@ -64,7 +62,7 @@ public class TestMemorySpace {
         int addr1 = memory.malloc(20);
         memory.malloc(30);
         memory.free(addr1);
-
+        System.out.println("CHECK OUT" + memory);
         String expected = "(0 , 20)(50 , 50)\n(20 , 30)\n";
         assertString(expected, memory.toString(), "Free memory state");
     }

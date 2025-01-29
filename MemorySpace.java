@@ -90,22 +90,18 @@ public class MemorySpace {
 	 *            the starting address of the block to freeList
 	 */
 	public void free(int address) {
-		ListIterator iterator2 = allocatedList.iterator();
-		int index = 0;
-		boolean blockFound = false;
-		while(iterator2.hasNext()){
-			if(allocatedList.getBlock(index).baseAddress == address){
-				blockFound = true;
-				break;
+		if (allocatedList.getSize() == 0) {
+			throw new IllegalArgumentException("index must be between 0 and size");
+		}
+		ListIterator allocIterator = allocatedList.iterator();
+		while (allocIterator.hasNext()) {
+			MemoryBlock alloCurrentBlock = allocIterator.next();
+			if (alloCurrentBlock.baseAddress == address) {
+				allocatedList.remove(alloCurrentBlock);
+				freeList.addLast(alloCurrentBlock);
+				return;
 			}
-			index++;
 		}
-		if(!blockFound){
-			return;
-		}
-		freeList.addLast(allocatedList.getBlock(index));
-		allocatedList.remove(index);
-		return;
 	}
 	
 	/**
@@ -125,15 +121,24 @@ public class MemorySpace {
 		int index = 0;
 
 		while (index < freeList.getSize() - 1) {
-			MemoryBlock current = freeList.getBlock(index);
-			MemoryBlock next = freeList.getBlock(index + 1);
-	
-			if (current.baseAddress + current.length == next.baseAddress) {
-				current.length += next.length;
-	
-				freeList.remove(index + 1);
-			} else {
-				index++;
+			if (freeList.getSize() <= 1) {
+				return;
+			}	
+			LinkedList betterFreeList = new LinkedList();
+			Node current = freeList.getNode(0);
+			while (current != null) {
+				Node toCheckOn = current.next;
+				while (toCheckOn != null) {
+					if (current.block.baseAddress + current.block.length == toCheckOn.block.baseAddress) {
+						current.block.length += toCheckOn.block.length;
+						freeList.remove(toCheckOn);
+						toCheckOn = current.next;
+					} else {
+						toCheckOn = toCheckOn.next;
+					}
+				}
+				betterFreeList.addLast(current.block);
+				current=current.next;
 			}
 		}
 	}
